@@ -917,6 +917,13 @@ DataTable.fn.setRowsSelect = function (indices) {
         // 避免与控件循环触发
         return;
     }
+    if(u.isArray(indices)) {
+      var rowNum = this.rows().length
+      for(var i=0;i<indices.length;i++) {
+        if(indices[i]<0 || indices[i] >= rowNum)
+		indices.splice(i, 1);
+      }
+    }
     this.setAllRowsUnSelect({quiet: true});
     try{
         this.selectedIndices(indices);
@@ -1650,7 +1657,7 @@ DataTable.fn._formatToIndicesArray = function (indices) {
     if (typeof indices == 'string' || typeof indices == 'number') {
         indices = [indices]
     } else if (indices instanceof Row) {
-        indices = this.getIndexByRowId(indices.rowId)
+        indices = [this.getIndexByRowId(indices.rowId)]
     } else if (u.isArray(indices) && indices.length > 0 && indices[0] instanceof Row) {
         for (var i = 0; i < indices.length; i++) {
             indices[i] = this.getIndexByRowId(indices[i].rowId)
