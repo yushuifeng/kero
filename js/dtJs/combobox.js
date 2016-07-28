@@ -9,11 +9,18 @@ u.ComboboxAdapter = u.BaseAdapter.extend({
         this.validType = 'combobox';
         this.comp = new u.Combo({el:this.element,mutilSelect:this.mutil,onlySelect:this.onlySelect});
         this.element['u.Combo'] = this.comp;
+        var isDsObservable = ko.isObservable(this.datasource);
         if (this.datasource){
-            this.comp.setComboData(this.datasource);
+            this.comp.setComboData(isDsObservable ? ko.toJS(this.datasource) : this.datasource);
         }else{
             if(u.isIE8 || u.isIE9)
                 alert("IE8/IE9必须设置datasource");
+        }
+        if(isDsObservable) {
+        	// datasource 发生变化时改变控件
+        	this.datasource.subscribe(function(value) {
+        		self.comp.setComboData(value);
+        	});
         }
         ////TODO 后续支持多选
         //if (this.mutil) {
